@@ -16,3 +16,32 @@
 //and file within it.
 //For example the Akira - 1988.mkv files folder should be Akira.
 //
+
+const { OpenAI } = require('openai');
+require('dotenv').config();
+const axios = require('axios');
+
+async function queryGPT35Turbo() {
+    const url = "https://api.openai.com/v1/chat/completions";
+    const payload = {
+        model: "gpt-3.5-turbo",
+        messages: [{
+            role: "user",
+            content: "Say this is a test!"
+        }],
+        temperature: 0.7
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    };
+
+    try {
+        const response = await axios.post(url, payload, { headers: headers });
+        console.log(response.data.choices[0].message.content);
+    } catch (error) {
+        console.error('Error querying OpenAI:', error.message);
+    }
+}
+
+module.exports = { queryGPT35Turbo };

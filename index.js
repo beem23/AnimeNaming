@@ -34,44 +34,56 @@
 
 const fs = require('fs');
 const path = require('path');
+const { queryGPT35Turbo } = require('./ai.js');
+async function runQuery() {
+    const prompt = "Explain the significance of quantum computing.";
+    try {
+        const responseText = await queryGPT35Turbo(prompt);
+        console.log('Response from OpenAI:', responseText);
+    } catch (error) {
+        console.error('Error querying OpenAI:', error);
+    }
+}
+
+runQuery();
 
 // Use double backslashes in the path for Windows
-const mainFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Testing';
-const rejectsFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Type Rejects';
-if (!fs.existsSync(rejectsFolder)) {
-    fs.mkdirSync(rejectsFolder, { recursive: true });
-}
-const movieFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Movies';
-if (!fs.existsSync(movieFolder)) {
-    fs.mkdirSync(movieFolder, { recursive: true });
-}
-const movieList = 'C:\\Users\\bello\\OneDrive\\Desktop\\Movies\\movies.txt';
+// const mainFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Testing';
+// const rejectsFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Type Rejects';
+// if (!fs.existsSync(rejectsFolder)) {
+//     fs.mkdirSync(rejectsFolder, { recursive: true });
+// }
+// const movieFolder = 'C:\\Users\\bello\\OneDrive\\Desktop\\Movies';
+// if (!fs.existsSync(movieFolder)) {
+//     fs.mkdirSync(movieFolder, { recursive: true });
+// }
+// const movieList = 'C:\\Users\\bello\\OneDrive\\Desktop\\Movies\\movies.txt';
 
-// Read all the files in the main folder
-fs.readdir(mainFolder, (err, files) => {
-    if (err) {
-        console.log(err);
-        return;
-    }
-    files.forEach(file => {
-        const fullPath = path.join(mainFolder, file);
-        console.log(fullPath);
-        if (path.extname(file).toLowerCase() === '.mkv' || path.extname(file).toLowerCase() === '.mp4') {
-            const destinationPath = path.join(movieFolder, 'movies.txt');
-            // Compile a list of all the current movies
-            fs.appendFile(destinationPath, file + ' #$% ', (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        } else {
-            // Move the file to the rejects folder
-            const destinationPath = path.join(rejectsFolder, file);
-            fs.rename(fullPath, destinationPath, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        }
-    });
-});
+// // Read all the files in the main folder
+// fs.readdir(mainFolder, (err, files) => {
+//     if (err) {
+//         console.log(err);
+//         return;
+//     }
+//     files.forEach(file => {
+//         const fullPath = path.join(mainFolder, file);
+//         console.log(fullPath);
+//         if (path.extname(file).toLowerCase() === '.mkv' || path.extname(file).toLowerCase() === '.mp4') {
+//             const destinationPath = path.join(movieFolder, 'movies.txt');
+//             // Compile a list of all the current movies
+//             fs.appendFile(destinationPath, file + ' #$% ', (err) => {
+//                 if (err) {
+//                     console.log(err);
+//                 }
+//             });
+//         } else {
+//             // Move the file to the rejects folder
+//             const destinationPath = path.join(rejectsFolder, file);
+//             fs.rename(fullPath, destinationPath, (err) => {
+//                 if (err) {
+//                     console.log(err);
+//                 }
+//             });
+//         }
+//     });
+// });
