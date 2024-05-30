@@ -1,26 +1,35 @@
 function parseMovieTitles(inputString) {
-    // Initialize an empty object to hold our key-value pairs
+    console.log("Input String from inside parsing function:", inputString);
+
+    if (!inputString) {
+        console.error('Invalid input: inputString is undefined or null.');
+        return {};
+    }
+
     const movieMap = {};
-
-    // Split the string into chunks based on the ' &&** ' delimiter
     const movies = inputString.split(' &&** ');
+    console.log("Movies array after split by '&&**':", movies);
 
-    // Process each chunk to extract the original and refined names
     movies.forEach(movie => {
+        console.log("Current movie string:", movie);
         if (movie) {
-            // Split each chunk into the original name and refined name using the ' #$% ' delimiter
             const parts = movie.split(' #$% ');
+            console.log("Parts after split by '#$%':", parts);
             if (parts.length === 2) {
                 const originalName = parts[0].trim();
                 const refinedName = parts[1].trim();
-                // Assign the original name as key and refined name as value in the map
                 movieMap[originalName] = refinedName;
+            } else {
+                console.log("Splitting by '#$%' did not produce expected parts:", parts);
             }
         }
     });
 
+    console.log("Final movieMap:", movieMap);
     return movieMap;
 }
+
+
 
 module.exports = { parseMovieTitles };
 
