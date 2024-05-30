@@ -32,7 +32,7 @@ async function queryGPT35Turbo(movies) {
     + " Example input of List: A Letter to Momo 2011.mkv &&** Akira - 1988.mkv &&** Angel Beats! OVA 01 - Stairway to Heaven.mkv" 
     + " The refined version should be like: A Letter to Momo 2011.mkv #$% A Letter to Momo &&** Akira - 1988.mkv #$% Akira &&** Angel Beats! OVA 01 - Stairway to Heaven.mkv #$% Angel Beats! OVA 01 - Stairway to Heaven"
     + " The unrefined movie titles are as follows:" + movies
-    + " Please refine the movie titles. And please DO NOT USE line breaks in the response.";
+    + " Please refine the movie titles. And please DO NOT USE line breaks in the response. And make sure the response is in the same order as the input. AND PLEASE make sure the response has no extra spaces or characters. except #$% and &&**.";
     console.log("Querying AI with content:", content);
 
     try {
