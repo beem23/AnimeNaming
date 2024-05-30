@@ -27,6 +27,7 @@ async function processMovies() {
     }
     const refinedNames = parseMovieTitles(aiResponse);
     console.log("Refined Movie Titles:", refinedNames);
+    
   } catch (error) {
     console.error("Failed processing movies:", error);
   }
