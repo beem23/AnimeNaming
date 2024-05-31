@@ -1,12 +1,14 @@
 const fs = require("fs").promises; // Use fs.promises for all FS operations
 const path = require("path");
+require("dotenv").config();
 const { queryGPT35Turbo } = require("./ai.js");
 const { parseMovieTitles } = require("./parseMovieTitles.js");
 const { makeFolders } = require("./makeFolders.js");
+const { getMovieYear } = require("./movieAPI.js");
 
-const mainFolder = "C:\\Users\\bello\\OneDrive\\Desktop\\Testing";
-const rejectsFolder = "C:\\Users\\bello\\OneDrive\\Desktop\\Type Rejects";
-const movieFolder = "C:\\Users\\bello\\OneDrive\\Desktop\\Movies";
+const mainFolder = process.env.MAIN_FOLDER;
+const rejectsFolder = process.env.REJECTS_FOLDER;
+const movieFolder = process.env.MOVIE_FOLDER;
 
 // Check and create folders if they don't exist
 async function ensureFoldersExist() {
@@ -31,6 +33,7 @@ async function processMovies() {
         const refinedNames = parseMovieTitles(aiResponse);
         console.log("Refined Movie Titles:", refinedNames);
         await makeFolders(refinedNames);
+        await getMovieYear();
     } catch (error) {
         console.error("Failed processing movies:", error);
     }

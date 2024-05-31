@@ -5,9 +5,10 @@
 
 const fs = require("fs").promises;
 const path = require("path");
+require("dotenv").config();
 
-const mainFolder = "C:\\Users\\bello\\OneDrive\\Desktop\\Testing";
-const movieFolder = "C:\\Users\\bello\\OneDrive\\Desktop\\Movies";
+const mainFolder = process.env.MAIN_FOLDER;
+const movieFolder = process.env.MOVIE_FOLDER;
 
 //read through the main folder and create folders in the moviesFolder for each key value pair
 async function makeFolders(kvPairs) {
