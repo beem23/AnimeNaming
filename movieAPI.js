@@ -3,16 +3,17 @@ const path = require('path');
 const fs = require('fs').promises; // Assuming you are using the promise-based API
 require('dotenv').config();
 
-const mainFolder = process.env.MAIN_FOLDER;
-const rejectsFolder = process.env.REJECTS_FOLDER;
-const movieFolder = process.env.MOVIE_FOLDER;
+const mainFolder = process.env.MAINFOLDER;
+const rejectsFolder = process.env.REJECTSFOLDER;
+const movieFolder = process.env.MOVIEFOLDER;
 
 async function callMovieDB(movieName) {
+    const refinedMovieName = movieName.replace(/ /g, "%20")
     try {
         const options = {
             method: 'GET',
             url: 'https://api.themoviedb.org/3/search/movie',
-            params: {query: movieName, include_adult: 'false', language: 'en-US', page: '1'},
+            params: {query: refinedMovieName, include_adult: 'false', language: 'en-US', page: '1'},
             headers: {accept: 'application/json', Authorization: `Bearer ${process.env.MOVIE_API_KEY}`}
           };
           
@@ -29,6 +30,11 @@ async function callMovieDB(movieName) {
     }
 }
 
+// Helper function to delay execution
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function getMovieYear() {
     try {
         const files = await fs.readdir(movieFolder);
@@ -40,10 +46,14 @@ async function getMovieYear() {
             const newFullPath = path.join(movieFolder, newFileName);
             await fs.rename(fullPath, newFullPath);
             console.log(`Renamed ${file} to ${newFileName}`);
+
+            await delay(2000); // Wait for 2 seconds before continuing to the next file
         }
     } catch (error) {
         console.error("Error processing files in movie folder:", error);
     }
 }
+
+
 
 exports.getMovieYear = getMovieYear;

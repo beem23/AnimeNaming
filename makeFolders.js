@@ -7,8 +7,12 @@ const fs = require("fs").promises;
 const path = require("path");
 require("dotenv").config();
 
-const mainFolder = process.env.MAIN_FOLDER;
-const movieFolder = process.env.MOVIE_FOLDER;
+const mainFolder = process.env.MAINFOLDER;
+const movieFolder = process.env.MOVIEFOLDER;
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 //read through the main folder and create folders in the moviesFolder for each key value pair
 async function makeFolders(kvPairs) {
@@ -28,6 +32,7 @@ async function makeFolders(kvPairs) {
             try {
                 await fs.rename(originalFilePath, newFilePath);
                 console.log(`Moved ${originalFile} to ${folderPath}`);
+                await delay(5000); // Wait for 2 seconds before moving the next file
             } catch (error) {
                 console.error(`Error moving file ${originalFile}: ${error.message}`);
             }

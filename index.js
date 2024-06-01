@@ -6,12 +6,16 @@ const { parseMovieTitles } = require("./parseMovieTitles.js");
 const { makeFolders } = require("./makeFolders.js");
 const { getMovieYear } = require("./movieAPI.js");
 
-const mainFolder = process.env.MAIN_FOLDER;
-const rejectsFolder = process.env.REJECTS_FOLDER;
-const movieFolder = process.env.MOVIE_FOLDER;
+const mainFolder = process.env.MAINFOLDER;
+const rejectsFolder = process.env.REJECTSFOLDER;
+const movieFolder = process.env.MOVIEFOLDER;
 
 // Check and create folders if they don't exist
 async function ensureFoldersExist() {
+    if (!mainFolder || !rejectsFolder || !movieFolder) {
+        console.error("One or more environment variables are undefined. Check your .env file.");
+        return; // Exit the function early if paths are not set
+    }
     try {
         await fs.mkdir(rejectsFolder, { recursive: true });
         await fs.mkdir(movieFolder, { recursive: true });
@@ -20,24 +24,45 @@ async function ensureFoldersExist() {
     }
 }
 
+
 let movieTitles = [];
 
+const BATCH_SIZE = 10; // Adjust the batch size as needed
+
 async function processMovies() {
+    let allRefinedTitles = []; // Array to collect refined titles from all batches
+
     try {
-        const titlesString = movieTitles.join(" &&** ");
-        const aiResponse = await queryGPT35Turbo(titlesString);
-        if (!aiResponse) {
-            console.log("AI did not return a valid response.");
-            return;
+        // Process the movie titles in batches
+        for (let i = 0; i < movieTitles.length; i += BATCH_SIZE) {
+            // Get the current batch of titles
+            const batch = movieTitles.slice(i, i + BATCH_SIZE);
+            const titlesString = batch.join(" &&** ");
+            const aiResponse = await queryGPT35Turbo(titlesString);
+
+            if (!aiResponse) {
+                console.log("AI did not return a valid response for batch starting at index", i);
+                continue; // Skip to next batch if AI response is invalid
+            }
+
+            const refinedNames = parseMovieTitles(aiResponse);
+            console.log(`Refined Movie Titles for batch starting at index ${i}:`, refinedNames);
+
+            await makeFolders(refinedNames); // Assuming makeFolders can handle a list of names
+            allRefinedTitles = allRefinedTitles.concat(refinedNames);
         }
-        const refinedNames = parseMovieTitles(aiResponse);
-        console.log("Refined Movie Titles:", refinedNames);
-        await makeFolders(refinedNames);
-        await getMovieYear();
+
+        // After all batches are processed, call getMovieYear for all refined titles at once
+        if (allRefinedTitles.length > 0) {
+            await getMovieYear(allRefinedTitles); // Ensure this function can handle all refined titles
+        } else {
+            console.log("No valid movie titles to process for years.");
+        }
     } catch (error) {
         console.error("Failed processing movies:", error);
     }
 }
+
 
 async function handleFiles() {
     try {

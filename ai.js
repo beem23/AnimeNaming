@@ -50,7 +50,7 @@ async function queryGPT35Turbo(movies) {
         if (response.data.choices && response.data.choices.length > 0) {
             const refinedTitles = response.data.choices[0].message.content;
             console.log("Response from AI:", refinedTitles);
-            return refinedTitles;
+            return refinedTitles.replace(/\n/g, "");
         } else {
             console.error("No data received from AI.");
             return '';
